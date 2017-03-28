@@ -9,10 +9,12 @@
     <DockPanel>
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="_File">
-                <MenuItem Header="_Open" Click="MenuItem_Click"/>
+                <MenuItem x:Name="Open" Header="_Open" Click="OpenItem_Click"/>
                 <MenuItem Header="_Save"/>
+                <MenuItem Header="_Show list" Click="MenuItem_Click"/>
+                <MenuItem Header="_Parse" Click="ParseItem_Click_2"/>
                 <Separator/>
-                <MenuItem Header="_Exit" Click="MenuItem_Click_1"/>
+                <MenuItem Header="_Exit" Click="ExitItem_Click_1"/>
             </MenuItem>
             <MenuItem Header="_Help">
                 <MenuItem Header="_About"/>
@@ -20,9 +22,22 @@
 
 
         </Menu>
-        <Grid DockPanel.Dock="Bottom">
-            <TextBox x:Name="textBox" TextWrapping="Wrap" Text=""/>
-            <!--ah hej-->
+        <StatusBar DockPanel.Dock="Bottom">
+            <TextBlock>Status</TextBlock>
+        </StatusBar>
+        <Grid>
+            
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBox x:Name="fileContents" Grid.Column="0" TextWrapping="Wrap" AcceptsReturn="True"/>
+            <GridSplitter HorizontalAlignment="Right" 
+                  VerticalAlignment="Stretch" 
+                  Grid.Column="1" ResizeBehavior="PreviousAndNext"
+                  Width="5" Background="#FFBCBCBC"/>
+            <DataGrid x:Name="people" Grid.Column="2"></DataGrid>
         </Grid>
     </DockPanel>
 

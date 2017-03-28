@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Win32;
+using System.IO;
 
 namespace NotepadSimulation
 {
@@ -21,29 +22,89 @@ namespace NotepadSimulation
     /// </summary>
     public partial class MainWindow : Window
     {
+        List<Persoon> personen = new List<Persoon>();
+        private string currentFile="";
+        private string initialDir;
+
         public MainWindow()
         {
+
             InitializeComponent();
             
+
+        }
+
+        private void OpenItem_Click(object sender, RoutedEventArgs e)
+        {
+            
+            
+                StreamReader inputStream;
+                OpenFileDialog dialog = new OpenFileDialog();
+                dialog.InitialDirectory = initialDir;
+                if (dialog.ShowDialog() == true)
+                {
+                    currentFile = dialog.FileName;
+                    inputStream = File.OpenText(currentFile);
+                    fileContents.Text = inputStream.ReadToEnd();
+                    inputStream.Close();
+                }
+            
+
+        }
+
+        private void ExitItem_Click_1(object sender, RoutedEventArgs e)
+        {
+            Environment.Exit(0);
+            
+        }
+
+        private void ParseItem_Click_2(object sender, RoutedEventArgs e)
+        {
+            List<Persoon> parsedPersonen = new List<Persoon>();
+
+            string[] filedata = fileContents.Text.Split('\n');
+            try
+            {
+                foreach (var row in filedata)
+                {
+                    string[] fields = row.Trim().Split(';');
+                    if (fields.Length != 3)
+                    {
+                        MessageBox.Show(string.Format("Couldn't parse [{0}], number of fields: {1}", row.Trim(), fields.Length));
+                    }
+                    else
+                    {
+                        var p = new Persoon();
+                        p.Voornaam = fields[0];
+                        p.Achternaam = fields[1];
+                        p.GeboorteDatum = DateTime.Parse(fields[2]);
+                        parsedPersonen.Add(p);
+                    }
+                    
+                }
+            }
+            catch (Exception exc)
+            {
+                MessageBox.Show(exc.ToString());
+            }
+
+            
+            people.ItemsSource = parsedPersonen; //connecteerd datagrid met lijst
         }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            string startdir = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
-            openFileDialog.InitialDirectory = startdir;
-            openFileDialog.Filter = "Tekstdocumenten|*.txt";
+            string s = "";
 
-            if (openFileDialog.ShowDialog() == true) // user clicks open
+            foreach (var p in personen)
             {
-                MessageBox.Show(openFileDialog.FileName);
+                s += p.ToString();
+                s += Environment.NewLine;
             }
-        }
 
-        private void MenuItem_Click_1(object sender, RoutedEventArgs e)
-        {
-            Environment.Exit(0);
-            
+
+            MessageBox.Show(s);
+        
         }
     }
 }
